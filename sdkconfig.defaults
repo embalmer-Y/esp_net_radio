@@ -1,0 +1,52 @@
+# ============ radio-p4c5 sdkconfig 默认值(ESP32-P4 / IDF v6.1) ============
+# 口径来源: Kaleido convo-stage(同款鱼鹰 P4C5 板, esp_hosted 3.0.10 真机实证)
+# + voice-loop-p4(音频链实证), 归档 /home/emb/project-archive/entelea-handoff-*/Kaleido
+
+# ---- 目标与主频 ----
+CONFIG_IDF_TARGET="esp32p4"
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ_400=y
+
+# ---- Flash(Boya 16MB, 通用驱动+QIO 即稳; stub 起不来走 ROM 模式) ----
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_SPI_FLASH_SUPPORT_BOYA_CHIP=y
+CONFIG_ESPTOOLPY_NO_STUB=y
+
+# ---- PSRAM(片内叠封 HEX 32MB @200MHz) ----
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_HEX=y
+CONFIG_SPIRAM_SPEED_200M=y
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MALLOC_ALWAYSINTERNAL=0
+# 64B 行吃掉大量内部 tag RAM, 预留池缩到 8K(hosted 池在 PSRAM 已替代其职责)
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=8192
+# app_player 解码任务栈走 PSRAM 静态双槽(与 S31 同设计)
+CONFIG_SPIRAM_ALLOW_STACK_EXTERNAL=y
+
+# ---- 分区表 ----
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+CONFIG_PARTITION_TABLE_OFFSET=0x10000
+
+# ---- 系统 ----
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=16384
+CONFIG_COMPILER_OPTIMIZATION_PERF=y
+# 国内电台源多为 https 的话需 TLS1.3(便宜先开)
+CONFIG_MBEDTLS_SSL_PROTO_TLS1_3=y
+
+# ---- WiFi over C5(esp_hosted 3.0.10; SDIO slot1/4bit/40MHz/复位54 = P4 默认) ----
+# 关掉 constructor 早启(Kaleido 缺陷 H: prio23 任务抢在 app_main 前 init 引发竞态),
+# app_net 里显式 esp_hosted_init() 保序
+CONFIG_ESP_HOSTED_AUTO_CALL_INIT_BEFORE_APP_MAIN=n
+# 64B cache 行: esp_hosted PSRAM mempool 与 128B 行组合 TX 缓冲半数非法
+# (esp-hosted-mcu #219), 实测 64B 下完整可用
+CONFIG_CACHE_L2_CACHE_LINE_64B=y
+CONFIG_CACHE_L2_CACHE_256KB=y
+CONFIG_ESP_HOSTED_MEMPOOL_PREFER_SPIRAM=y
+CONFIG_LWIP_TCP_SACK_OUT=y
+
+# 共芯目标: C5(默认 C6 会芯片枚举失配 expect=0x0d got=0x17, 2026-11-12 实测)
+CONFIG_SLAVE_IDF_TARGET_ESP32C5=y

@@ -1,0 +1,32 @@
+menu "Radio P4C5"
+
+    config ESP_CUBE_WIFI_SSID
+        string "WiFi SSID"
+        default "your-ssid"
+
+    config ESP_CUBE_WIFI_PASSWORD
+        string "WiFi 密码"
+        default "your-password"
+
+    config ESP_CUBE_DEFAULT_VOLUME
+        int "默认音量(0-100)"
+        default 35
+
+    config ESP_CUBE_MIXER_RATE
+        int "混音引擎采样率(Hz)"
+        default 48000
+        range 16000 96000
+
+    config ESP_CUBE_NET_PREFILL_MS
+        int "网络音源预填充(ms)"
+        default 1000
+
+    config ESP_CUBE_TEST_TONE
+        bool "播放测试音(绕过解码器, 验证DAC链路)"
+        default n
+
+    config ESP_CUBE_AUDIO_DEBUG
+        bool "音频链路调试日志"
+        default n
+
+endmenu

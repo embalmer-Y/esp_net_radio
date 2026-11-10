@@ -1,0 +1,10 @@
+# mp3_helix IRAM 常驻(M1.5 攻坚, 2026-11-09)
+# 现象: libhelix 在 S31(320MHz, -Os/-O3) 上解码 44.1k/2ch 25-27ms/帧 ≈ 1.0x 实时。
+# 根因: 解码器代码与三角函数表在 flash, 经 MSPI 取回并与 core0 的 WiFi/BT 争抢总线
+#       (参照 esp-adf-libs #85: flash 配置对解码速度影响 14-21%)。
+# 方案: IDF 内置 noflash scheme(text→iram0_text, rodata→dram0_data)将整个解码器
+#       常驻内部 SRAM, 零 flash 取指。44KB text, 占用 512KB 单 SRAM 可接受。
+[mapping:mp3_helix]
+archive: libmp3_helix.a
+entries:
+    * (noflash)

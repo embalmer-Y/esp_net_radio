@@ -1,0 +1,6 @@
+# radio-p4c5 分区表(16MB Flash, 偏移 0x10000——XIP bootloader 超 0x6000,
+# 沿用 Kaleido P4C5 实证口径)
+# Name,   Type, SubType, Offset,   Size,     Flags
+nvs,     data, nvs,     0x11000,  0x6000,
+phy_init,data, phy,     0x17000,  0x1000,
+factory, app,  factory, 0x20000,  0x400000,

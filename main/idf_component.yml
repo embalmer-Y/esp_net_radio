@@ -1,0 +1,10 @@
+## radio-p4c5 依赖(与 firmware/main 对齐的电台子集 + P4 板专属)
+dependencies:
+  # WiFi over C5: host 3.0.10 × 本板 C5 slave 3.0.10 同版本配对
+  espressif/esp_hosted: "3.0.10"
+  # 音频 codec: 1.6.2(Kaleido 本板实证口径; S31 主工程用 2.0.0-beta5 互不影响)
+  espressif/esp_codec_dev: "1.6.2"
+  # 解码与 HLS(与 firmware/main 同版本, 保 4 个内置 HLS 电台源)
+  espressif/esp_audio_codec: "^2.6.0"
+  espressif/esp_hls_stream: "^1.0.4"
+  espressif/cjson: "^1.7.19"
